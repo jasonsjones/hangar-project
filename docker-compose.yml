@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: hanger_db
+    restart: always
+    environment:
+      POSTGRES_USER: pilot_user
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: hanger_db
+    ports:
+      - 5432:5432
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  server:
+    build: ./server
+    container_name: hanger_api
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/hanger_db
+      SPRING_DATASOURCE_USERNAME: pilot_user
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+  client:
+    build: ./client
+    container_name: hanger_client
+    ports:
+      - "5173:80" # Maps container port 80 to host port 5173
+    depends_on:
+      - server
+
+volumes:
+  db_data:
