@@ -2,6 +2,18 @@
 
 # Exit immediately if a command exits with a non-zero status
 set -e
+# Enable job control so background jobs get their own process groups (needed for clean shutdown)
+set -m
+
+# Load environment variables from .env (create from .env.example if missing)
+if [ ! -f .env ]; then
+  echo "⚠️  No .env file found. Copy .env.example to .env and configure your secrets."
+  echo "   Run: cp .env.example .env"
+  exit 1
+fi
+set -a
+source .env
+set +a
 
 echo "🚀 Starting development environment (no Docker image builds)..."
 
@@ -11,7 +23,7 @@ docker compose up -d db
 
 # Wait for Postgres to be ready
 echo "⏳ Waiting for database to be ready..."
-until docker compose exec -T db pg_isready -U pilot_user -d hanger_db 2>/dev/null; do
+until docker compose exec -T db pg_isready -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" 2>/dev/null; do
   sleep 1
 done
 echo "✅ Database ready"
@@ -26,9 +38,10 @@ fi
 echo "🔧 Starting server..."
 (
   cd server
-  export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/hanger_db
-  export SPRING_DATASOURCE_USERNAME=pilot_user
-  export SPRING_DATASOURCE_PASSWORD=postgres
+  export SPRING_DATASOURCE_URL="jdbc:postgresql://localhost:5432/${POSTGRES_DB}"
+  export SPRING_DATASOURCE_USERNAME
+  export SPRING_DATASOURCE_PASSWORD
+  export SPRING_JPA_HIBERNATE_DDL_AUTO
   mvn spring-boot:run
 ) &
 SERVER_PID=$!
@@ -39,12 +52,18 @@ cd client
 npm run dev &
 CLIENT_PID=$!
 
-# Cleanup on exit
+# Cleanup on exit - kill process groups so Java (mvn) and Node (npm) children are terminated
 cleanup() {
   echo ""
   echo "🛑 Shutting down..."
-  kill $SERVER_PID 2>/dev/null || true
-  kill $CLIENT_PID 2>/dev/null || true
+  # Kill process groups (negative PID) to terminate entire trees: mvn->java, npm->node
+  [ -n "$SERVER_PID" ] && kill -TERM -- -$SERVER_PID 2>/dev/null || true
+  [ -n "$CLIENT_PID" ] && kill -TERM -- -$CLIENT_PID 2>/dev/null || true
+  # Give processes a moment to exit gracefully
+  sleep 2
+  # Force kill any stragglers
+  [ -n "$SERVER_PID" ] && kill -KILL -- -$SERVER_PID 2>/dev/null || true
+  [ -n "$CLIENT_PID" ] && kill -KILL -- -$CLIENT_PID 2>/dev/null || true
   exit 0
 }
 trap cleanup SIGINT SIGTERM
