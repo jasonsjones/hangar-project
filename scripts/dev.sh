@@ -60,14 +60,16 @@ CLIENT_PID=$!
 cleanup() {
   echo ""
   echo "🛑 Shutting down..."
-  # Kill process groups (negative PID) to terminate entire trees: mvn->java, npm->node
-  [ -n "$SERVER_PID" ] && kill -TERM -- -$SERVER_PID 2>/dev/null || true
-  [ -n "$CLIENT_PID" ] && kill -TERM -- -$CLIENT_PID 2>/dev/null || true
+  # Use PGID (not PID) - npm spawns node in a process group led by an ancestor, so -$PID targets wrong group
+  SERVER_PGID=$(ps -o pgid= -p "$SERVER_PID" 2>/dev/null | tr -d ' ')
+  CLIENT_PGID=$(ps -o pgid= -p "$CLIENT_PID" 2>/dev/null | tr -d ' ')
+  [ -n "$SERVER_PGID" ] && kill -TERM -- -$SERVER_PGID 2>/dev/null || true
+  [ -n "$CLIENT_PGID" ] && kill -TERM -- -$CLIENT_PGID 2>/dev/null || true
   # Give processes a moment to exit gracefully
   sleep 2
   # Force kill any stragglers
-  [ -n "$SERVER_PID" ] && kill -KILL -- -$SERVER_PID 2>/dev/null || true
-  [ -n "$CLIENT_PID" ] && kill -KILL -- -$CLIENT_PID 2>/dev/null || true
+  [ -n "$SERVER_PGID" ] && kill -KILL -- -$SERVER_PGID 2>/dev/null || true
+  [ -n "$CLIENT_PGID" ] && kill -KILL -- -$CLIENT_PGID 2>/dev/null || true
   exit 0
 }
 trap cleanup SIGINT SIGTERM
