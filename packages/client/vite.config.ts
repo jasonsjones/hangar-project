@@ -3,7 +3,8 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { execSync } from 'child_process'
 
-const commitHash = execSync('git rev-parse --short HEAD').toString().trim()
+const commitHash = process.env.VITE_BUILD_COMMIT
+  ?? execSync('git rev-parse --short HEAD').toString().trim()
 const buildDate = new Date().toISOString()
 
 // https://vite.dev/config/

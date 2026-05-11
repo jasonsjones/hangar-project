@@ -6,6 +6,9 @@ WORKDIR /app
 COPY package.json ./
 RUN npm install
 
+ARG VITE_BUILD_COMMIT=unknown
+ENV VITE_BUILD_COMMIT=$VITE_BUILD_COMMIT
+
 COPY . .
 RUN npm run build
 
