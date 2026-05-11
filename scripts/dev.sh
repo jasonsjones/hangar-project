@@ -33,15 +33,15 @@ done
 echo "✅ Database ready"
 
 # 3. Install client dependencies if needed
-if [ ! -d "client/node_modules" ]; then
+if [ ! -d "packages/client/node_modules" ]; then
   echo "📦 Installing client dependencies..."
-  cd client && npm install && cd ..
+  cd packages/client && npm install && cd ../..
 fi
 
 # 4. Start server in background (connects to localhost postgres)
 echo "🔧 Starting server..."
 (
-  cd server
+  cd packages/server
   export SPRING_DATASOURCE_URL="jdbc:postgresql://localhost:5432/${POSTGRES_DB}"
   export SPRING_DATASOURCE_USERNAME
   export SPRING_DATASOURCE_PASSWORD
@@ -52,7 +52,7 @@ SERVER_PID=$!
 
 # 5. Start client dev server
 echo "🎨 Starting client..."
-cd client
+cd packages/client
 npm run dev &
 CLIENT_PID=$!
 

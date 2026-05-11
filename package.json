@@ -1,0 +1,9 @@
+{
+  "name": "hangar-project",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "./scripts/dev.sh",
+    "start": "./scripts/start.sh"
+  }
+}

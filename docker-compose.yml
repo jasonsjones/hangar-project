@@ -20,7 +20,7 @@ services:
       retries: 5
 
   server:
-    build: ./server
+    build: ./packages/server
     container_name: hanger_api
     restart: always
     ports:
@@ -35,7 +35,7 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
 
   client:
-    build: ./client
+    build: ./packages/client
     container_name: hanger_client
     ports:
       - "5173:80" # Maps container port 80 to host port 5173

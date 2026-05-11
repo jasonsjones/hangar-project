@@ -28,5 +28,5 @@ dist-ssr
 *.sln
 *.sw?
 
-server/target/*
+packages/server/target
 
