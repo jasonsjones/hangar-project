@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 
+
 interface StatusResponse {
   status: string
 }
@@ -53,8 +54,13 @@ export function StatusPage() {
       ? 'border-2 border-green-500/40 animate-pulse-ok'
       : 'border-0 opacity-0'
 
+  const buildDateFormatted = new Date(import.meta.env.VITE_BUILD_DATE as string).toLocaleDateString(
+    'en-US',
+    { year: 'numeric', month: 'short', day: 'numeric' }
+  )
+
   return (
-    <div className="status-page-bg min-h-screen flex items-start justify-center p-8">
+    <div className="status-page-bg min-h-screen flex flex-col items-center justify-start p-8">
       <div className="max-w-96 w-full p-10 text-center rounded-2xl border backdrop-blur-xl bg-white/85 border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.9)] dark:bg-slate-800/60 dark:border-slate-600/50 dark:shadow-[0_4px_24px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]">
         <div className="relative inline-flex items-center justify-center w-16 h-16 mb-6">
           <div
@@ -79,6 +85,18 @@ export function StatusPage() {
             'Unable to reach the server. It may be down or unreachable.'}
         </p>
       </div>
+      <footer className="mt-4 text-xs text-slate-400/60 dark:text-slate-600 tabular-nums">
+        {'Build: '}
+        <a
+          href={`https://github.com/jasonsjones/hangar-project/commit/${import.meta.env.VITE_BUILD_COMMIT}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-mono hover:text-slate-400 dark:hover:text-slate-500 transition-colors"
+        >
+          {import.meta.env.VITE_BUILD_COMMIT as string}
+        </a>
+        {` (${buildDateFormatted})`}
+      </footer>
     </div>
   );
 }
