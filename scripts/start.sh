@@ -7,16 +7,16 @@ echo "🚀 Starting the Monorepo Orchestrator..."
 
 # 1. Build the Backend (Spring Boot)
 echo "📦 Building server..."
-cd server
+cd packages/server
 mvn clean package -DskipTests
-cd ..
+cd ../..
 
 # 2. Build the Frontend (React TypeScript)
 echo "📦 Building client..."
-cd client
+cd packages/client
 npm install
 npm run build
-cd ..
+cd ../..
 
 # 3. Spin up the Docker containers
 echo "🐳 Launching Docker Compose..."
