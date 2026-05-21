@@ -30,3 +30,8 @@ dist-ssr
 
 packages/server/target
 
+# Playwright
+packages/client/test-results
+packages/client/playwright-report
+packages/client/blob-report
+packages/client/playwright/.cache

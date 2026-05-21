@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "./scripts/dev.sh",
-    "start": "./scripts/start.sh"
+    "start": "./scripts/start.sh",
+    "test": "npm test --prefix packages/client",
+    "test:e2e": "npm run test:e2e --prefix packages/client"
   }
 }
