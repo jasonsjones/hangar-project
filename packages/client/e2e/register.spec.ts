@@ -69,7 +69,7 @@ test.describe('Register page', () => {
     await expect(page.getByText(/account created/i)).toBeVisible()
     await page.waitForURL('**/')
     await expect(
-      page.getByRole('heading', { name: /server online|checking server|server offline/i }),
+      page.getByRole('heading', { name: /welcome to hangar 1000/i }),
     ).toBeVisible()
   })
 
