@@ -9,7 +9,6 @@ export function StatusPage() {
   const [status, setStatus] = useState<'checking' | 'ok' | 'error'>('checking')
 
   useEffect(() => {
-    let intervalId: ReturnType<typeof setInterval>
     let controller: AbortController
     let timeout: ReturnType<typeof setTimeout>
 
@@ -33,7 +32,7 @@ export function StatusPage() {
     }
 
     poll()
-    intervalId = setInterval(poll, 5000)
+    const intervalId = setInterval(poll, 5000)
 
     return () => {
       clearInterval(intervalId)
