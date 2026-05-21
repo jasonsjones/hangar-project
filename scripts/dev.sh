@@ -17,9 +17,9 @@ set +a
 
 echo "🚀 Starting development environment (no Docker image builds)..."
 
-# 1. Remove existing db container and volume for fresh start (in case db name/creds changed)
-echo "🗑️  Removing existing database and volume for fresh start..."
-docker compose down -v 2>/dev/null || true
+# 1. Stop any existing db container (preserve the volume so data persists across runs)
+echo "🛑 Stopping any existing database container..."
+docker compose down 2>/dev/null || true
 
 # 2. Start the database only (uses pre-built postgres image, no build)
 echo "🐳 Starting database..."
