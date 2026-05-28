@@ -1,7 +1,9 @@
 package dev.jasonsjones.hanger_api.user;
 
+import dev.jasonsjones.hanger_api.credential.PasswordService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -13,6 +15,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -20,6 +23,9 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private PasswordService passwordService;
 
     @InjectMocks
     private UserService userService;
@@ -54,25 +60,51 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldCreateUser() {
-        User user = new User("a@example.com", "Alice", "Smith");
+    void shouldRegisterUserWithoutPassword() {
+        RegisterUserRequest request = new RegisterUserRequest("a@example.com", "Alice", "Smith", null);
         when(userRepository.existsByEmail("a@example.com")).thenReturn(false);
-        when(userRepository.save(user)).thenReturn(user);
+        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        User created = userService.create(user);
+        User created = userService.register(request);
+
         assertThat(created.getEmail()).isEqualTo("a@example.com");
-        verify(userRepository).save(user);
+        verify(passwordService, never()).setPassword(any(), any());
+    }
+
+    @Test
+    void shouldRegisterUserWithPassword() {
+        RegisterUserRequest request = new RegisterUserRequest("a@example.com", "Alice", "Smith", "secretpw1");
+        when(userRepository.existsByEmail("a@example.com")).thenReturn(false);
+        ArgumentCaptor<User> savedUser = ArgumentCaptor.forClass(User.class);
+        when(userRepository.save(savedUser.capture())).thenAnswer(inv -> inv.getArgument(0));
+
+        User created = userService.register(request);
+
+        assertThat(created.getEmail()).isEqualTo("a@example.com");
+        verify(passwordService).setPassword(eq(savedUser.getValue().getId()), eq("secretpw1"));
+    }
+
+    @Test
+    void shouldSkipPasswordWhenBlank() {
+        RegisterUserRequest request = new RegisterUserRequest("a@example.com", "Alice", "Smith", "   ");
+        when(userRepository.existsByEmail("a@example.com")).thenReturn(false);
+        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        userService.register(request);
+
+        verify(passwordService, never()).setPassword(any(), any());
     }
 
     @Test
     void shouldThrowWhenEmailAlreadyExists() {
-        User user = new User("a@example.com", "Alice", "Smith");
+        RegisterUserRequest request = new RegisterUserRequest("a@example.com", "Alice", "Smith", "secretpw1");
         when(userRepository.existsByEmail("a@example.com")).thenReturn(true);
 
-        assertThatThrownBy(() -> userService.create(user))
+        assertThatThrownBy(() -> userService.register(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("a@example.com");
         verify(userRepository, never()).save(any());
+        verify(passwordService, never()).setPassword(any(), any());
     }
 
     @Test

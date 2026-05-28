@@ -70,22 +70,54 @@ class UserControllerTest {
 
     @Test
     @WithMockUser
-    void shouldCreateUser() throws Exception {
-        User user = new User("a@example.com", "Alice", "Smith");
-        when(userService.create(any(User.class))).thenReturn(user);
+    void shouldCreateUserWithoutPassword() throws Exception {
+        User created = new User("a@example.com", "Alice", "Smith");
+        when(userService.register(any(RegisterUserRequest.class))).thenReturn(created);
+
+        RegisterUserRequest request = new RegisterUserRequest("a@example.com", "Alice", "Smith", null);
 
         mockMvc.perform(post("/api/users")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.email").value("a@example.com"));
+                .andExpect(jsonPath("$.email").value("a@example.com"))
+                .andExpect(jsonPath("$.password").doesNotExist());
+    }
+
+    @Test
+    @WithMockUser
+    void shouldCreateUserWithPassword() throws Exception {
+        User created = new User("a@example.com", "Alice", "Smith");
+        when(userService.register(any(RegisterUserRequest.class))).thenReturn(created);
+
+        RegisterUserRequest request = new RegisterUserRequest("a@example.com", "Alice", "Smith", "secretpw1");
+
+        mockMvc.perform(post("/api/users")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.email").value("a@example.com"))
+                .andExpect(jsonPath("$.password").doesNotExist());
     }
 
     @Test
     @WithMockUser
     void shouldReturn400WhenCreatingUserWithInvalidData() throws Exception {
-        User invalid = new User("not-an-email", "", "Smith");
+        RegisterUserRequest invalid = new RegisterUserRequest("not-an-email", "", "Smith", null);
+
+        mockMvc.perform(post("/api/users")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalid)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser
+    void shouldReturn400WhenPasswordTooShort() throws Exception {
+        RegisterUserRequest invalid = new RegisterUserRequest("a@example.com", "Alice", "Smith", "short");
 
         mockMvc.perform(post("/api/users")
                         .with(csrf())
