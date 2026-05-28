@@ -1,6 +1,8 @@
 package dev.jasonsjones.hanger_api.user;
 
+import dev.jasonsjones.hanger_api.credential.PasswordService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,9 +12,11 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordService passwordService;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordService passwordService) {
         this.userRepository = userRepository;
+        this.passwordService = passwordService;
     }
 
     public List<User> findAll() {
@@ -23,11 +27,20 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public User create(User user) {
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new IllegalArgumentException("Email already in use: " + user.getEmail());
+    @Transactional
+    public User register(RegisterUserRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("Email already in use: " + request.getEmail());
         }
-        return userRepository.save(user);
+        User saved = userRepository.save(new User(
+                request.getEmail(),
+                request.getFirstName(),
+                request.getLastName()
+        ));
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            passwordService.setPassword(saved.getId(), request.getPassword());
+        }
+        return saved;
     }
 
     public Optional<User> update(UUID id, User userDetails) {
