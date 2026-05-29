@@ -7,7 +7,7 @@ A small flight-sim companion app, kept as a personal **learning side-project**. 
 Monorepo with two packages:
 
 - `packages/server` — Java 21, Spring Boot, Spring Data JDBC, Postgres in prod / H2 in tests, Maven (`./mvnw`).
-- `packages/client` — Vue 3 + Vite + Vitest unit tests + Playwright e2e.
+- `packages/client` — React 19 + TypeScript + Vite, Vitest + React Testing Library for unit tests, Playwright for e2e.
 
 CI is per-package: `.github/workflows/server-ci.yml` and `client-ci.yml`. Server CI runs `./mvnw -B verify` against H2; client CI runs lint + Vitest + Playwright + a Docker build, all self-contained (no live API).
 

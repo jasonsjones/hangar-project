@@ -13,6 +13,8 @@ test.describe('Register page', () => {
     await expect(page.getByText(/first name is required/i)).toBeVisible()
     await expect(page.getByText(/last name is required/i)).toBeVisible()
     await expect(page.getByText(/email is required/i)).toBeVisible()
+    await expect(page.getByText(/password is required/i)).toBeVisible()
+    await expect(page.getByText(/please confirm your password/i)).toBeVisible()
   })
 
   test('shows an invalid-email error for malformed input', async ({ page }) => {
@@ -39,6 +41,7 @@ test.describe('Register page', () => {
         email: 'ada@example.com',
         firstName: 'Ada',
         lastName: 'Lovelace',
+        password: 'correcthorse',
       })
       await route.fulfill({
         status: 201,
@@ -64,6 +67,8 @@ test.describe('Register page', () => {
     await page.getByLabel(/first name/i).fill('Ada')
     await page.getByLabel(/last name/i).fill('Lovelace')
     await page.getByLabel(/email/i).fill('ada@example.com')
+    await page.getByLabel(/^password$/i).fill('correcthorse')
+    await page.getByLabel(/confirm password/i).fill('correcthorse')
     await page.getByRole('button', { name: /^register$/i }).click()
 
     await expect(page.getByText(/account created/i)).toBeVisible()
@@ -83,6 +88,8 @@ test.describe('Register page', () => {
     await page.getByLabel(/first name/i).fill('Ada')
     await page.getByLabel(/last name/i).fill('Lovelace')
     await page.getByLabel(/email/i).fill('ada@example.com')
+    await page.getByLabel(/^password$/i).fill('correcthorse')
+    await page.getByLabel(/confirm password/i).fill('correcthorse')
     await page.getByRole('button', { name: /^register$/i }).click()
 
     await expect(
