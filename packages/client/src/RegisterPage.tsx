@@ -5,13 +5,19 @@ interface FormState {
   email: string
   firstName: string
   lastName: string
+  password: string
+  confirmPassword: string
 }
 
 interface FormErrors {
   email?: string
   firstName?: string
   lastName?: string
+  password?: string
+  confirmPassword?: string
 }
+
+const PASSWORD_MIN = 8
 
 type SubmitState =
   | { kind: 'idle' }
@@ -34,6 +40,16 @@ function validate(values: FormState): FormErrors {
   if (!values.lastName.trim()) {
     errors.lastName = 'Last name is required.'
   }
+  if (!values.password) {
+    errors.password = 'Password is required.'
+  } else if (values.password.length < PASSWORD_MIN) {
+    errors.password = `Password must be at least ${PASSWORD_MIN} characters.`
+  }
+  if (!values.confirmPassword) {
+    errors.confirmPassword = 'Please confirm your password.'
+  } else if (values.password && values.confirmPassword !== values.password) {
+    errors.confirmPassword = 'Passwords do not match.'
+  }
   return errors
 }
 
@@ -43,6 +59,8 @@ export function RegisterPage() {
     email: '',
     firstName: '',
     lastName: '',
+    password: '',
+    confirmPassword: '',
   })
   const [errors, setErrors] = useState<FormErrors>({})
   const [submit, setSubmit] = useState<SubmitState>({ kind: 'idle' })
@@ -72,6 +90,7 @@ export function RegisterPage() {
           email: values.email.trim(),
           firstName: values.firstName.trim(),
           lastName: values.lastName.trim(),
+          password: values.password,
         }),
       })
       if (!response.ok) {
@@ -85,7 +104,13 @@ export function RegisterPage() {
         return
       }
       setSubmit({ kind: 'success' })
-      setValues({ email: '', firstName: '', lastName: '' })
+      setValues({
+        email: '',
+        firstName: '',
+        lastName: '',
+        password: '',
+        confirmPassword: '',
+      })
       setTimeout(() => navigate('/'), 1500)
     } catch {
       setSubmit({
@@ -202,6 +227,73 @@ export function RegisterPage() {
                   className="mt-1.5 text-sm text-red-600 dark:text-red-400"
                 >
                   {errors.email}
+                </p>
+              )}
+            </div>
+
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5"
+              >
+                Password
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="new-password"
+                value={values.password}
+                onChange={(e) => setField('password', e.target.value)}
+                className={inputClass(Boolean(errors.password))}
+                aria-invalid={Boolean(errors.password) || undefined}
+                aria-describedby={errors.password ? 'password-error' : 'password-hint'}
+              />
+              {errors.password ? (
+                <p
+                  id="password-error"
+                  role="alert"
+                  className="mt-1.5 text-sm text-red-600 dark:text-red-400"
+                >
+                  {errors.password}
+                </p>
+              ) : (
+                <p
+                  id="password-hint"
+                  className="mt-1.5 text-sm text-slate-500 dark:text-slate-400"
+                >
+                  At least {PASSWORD_MIN} characters.
+                </p>
+              )}
+            </div>
+
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5"
+              >
+                Confirm password
+              </label>
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                autoComplete="new-password"
+                value={values.confirmPassword}
+                onChange={(e) => setField('confirmPassword', e.target.value)}
+                className={inputClass(Boolean(errors.confirmPassword))}
+                aria-invalid={Boolean(errors.confirmPassword) || undefined}
+                aria-describedby={
+                  errors.confirmPassword ? 'confirmPassword-error' : undefined
+                }
+              />
+              {errors.confirmPassword && (
+                <p
+                  id="confirmPassword-error"
+                  role="alert"
+                  className="mt-1.5 text-sm text-red-600 dark:text-red-400"
+                >
+                  {errors.confirmPassword}
                 </p>
               )}
             </div>

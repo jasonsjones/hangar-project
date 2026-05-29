@@ -29,6 +29,8 @@ describe('RegisterPage', () => {
     expect(screen.getByLabelText(/first name/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/last name/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/confirm password/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /register/i })).toBeInTheDocument()
   })
 
@@ -41,6 +43,42 @@ describe('RegisterPage', () => {
     expect(screen.getByText(/first name is required/i)).toBeInTheDocument()
     expect(screen.getByText(/last name is required/i)).toBeInTheDocument()
     expect(screen.getByText(/email is required/i)).toBeInTheDocument()
+    expect(screen.getByText(/password is required/i)).toBeInTheDocument()
+    expect(
+      screen.getByText(/please confirm your password/i),
+    ).toBeInTheDocument()
+    expect(globalThis.fetch).not.toHaveBeenCalled()
+  })
+
+  it('shows a min-length error when the password is too short', async () => {
+    const user = userEvent.setup()
+    renderPage()
+
+    await user.type(screen.getByLabelText(/first name/i), 'Ada')
+    await user.type(screen.getByLabelText(/last name/i), 'Lovelace')
+    await user.type(screen.getByLabelText(/email/i), 'ada@example.com')
+    await user.type(screen.getByLabelText(/^password$/i), 'short')
+    await user.type(screen.getByLabelText(/confirm password/i), 'short')
+    await user.click(screen.getByRole('button', { name: /register/i }))
+
+    expect(
+      screen.getByText(/password must be at least 8 characters/i),
+    ).toBeInTheDocument()
+    expect(globalThis.fetch).not.toHaveBeenCalled()
+  })
+
+  it('shows a mismatch error when confirm password differs', async () => {
+    const user = userEvent.setup()
+    renderPage()
+
+    await user.type(screen.getByLabelText(/first name/i), 'Ada')
+    await user.type(screen.getByLabelText(/last name/i), 'Lovelace')
+    await user.type(screen.getByLabelText(/email/i), 'ada@example.com')
+    await user.type(screen.getByLabelText(/^password$/i), 'correcthorse')
+    await user.type(screen.getByLabelText(/confirm password/i), 'correctmoose')
+    await user.click(screen.getByRole('button', { name: /register/i }))
+
+    expect(screen.getByText(/passwords do not match/i)).toBeInTheDocument()
     expect(globalThis.fetch).not.toHaveBeenCalled()
   })
 
@@ -84,6 +122,8 @@ describe('RegisterPage', () => {
     await user.type(screen.getByLabelText(/first name/i), 'Ada')
     await user.type(screen.getByLabelText(/last name/i), 'Lovelace')
     await user.type(screen.getByLabelText(/email/i), 'ada@example.com')
+    await user.type(screen.getByLabelText(/^password$/i), 'correcthorse')
+    await user.type(screen.getByLabelText(/confirm password/i), 'correcthorse')
     await user.click(screen.getByRole('button', { name: /register/i }))
 
     expect(fetchMock).toHaveBeenCalledTimes(1)
@@ -94,6 +134,7 @@ describe('RegisterPage', () => {
       email: 'ada@example.com',
       firstName: 'Ada',
       lastName: 'Lovelace',
+      password: 'correcthorse',
     })
 
     expect(await screen.findByText(/account created/i)).toBeInTheDocument()
@@ -109,6 +150,8 @@ describe('RegisterPage', () => {
     await user.type(screen.getByLabelText(/first name/i), 'Ada')
     await user.type(screen.getByLabelText(/last name/i), 'Lovelace')
     await user.type(screen.getByLabelText(/email/i), 'ada@example.com')
+    await user.type(screen.getByLabelText(/^password$/i), 'correcthorse')
+    await user.type(screen.getByLabelText(/confirm password/i), 'correcthorse')
     await user.click(screen.getByRole('button', { name: /register/i }))
 
     expect(
@@ -124,6 +167,8 @@ describe('RegisterPage', () => {
     await user.type(screen.getByLabelText(/first name/i), 'Ada')
     await user.type(screen.getByLabelText(/last name/i), 'Lovelace')
     await user.type(screen.getByLabelText(/email/i), 'ada@example.com')
+    await user.type(screen.getByLabelText(/^password$/i), 'correcthorse')
+    await user.type(screen.getByLabelText(/confirm password/i), 'correcthorse')
     await user.click(screen.getByRole('button', { name: /register/i }))
 
     expect(await screen.findByText(/network error/i)).toBeInTheDocument()
