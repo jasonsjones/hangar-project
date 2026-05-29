@@ -78,6 +78,26 @@ test.describe('Register page', () => {
     ).toBeVisible()
   })
 
+  test('shows a mismatch error when passwords do not match', async ({ page }) => {
+    let apiCalled = false
+    await page.route('**/api/users', (route) => {
+      apiCalled = true
+      return route.fulfill({ status: 201, body: '' })
+    })
+
+    await page.goto('/register')
+
+    await page.getByLabel(/first name/i).fill('Ada')
+    await page.getByLabel(/last name/i).fill('Lovelace')
+    await page.getByLabel(/email/i).fill('ada@example.com')
+    await page.getByLabel(/^password$/i).fill('correcthorse')
+    await page.getByLabel(/confirm password/i).fill('correctmoose')
+    await page.getByRole('button', { name: /^register$/i }).click()
+
+    await expect(page.getByText(/passwords do not match/i)).toBeVisible()
+    expect(apiCalled).toBe(false)
+  })
+
   test('shows duplicate-email error when server returns 409', async ({ page }) => {
     await page.route('**/api/users', (route) =>
       route.fulfill({ status: 409, body: '' }),
