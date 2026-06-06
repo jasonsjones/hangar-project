@@ -79,6 +79,12 @@ export function StatusPage() {
             Create an account
           </Link>
           <Link
+            to="/login"
+            className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white/80 px-6 py-3 text-base font-medium text-slate-700 shadow-sm transition hover:bg-white focus:outline-none focus:ring-2 focus:ring-slate-300 dark:border-slate-600 dark:bg-slate-800/60 dark:text-slate-200 dark:hover:bg-slate-800"
+          >
+            Sign in
+          </Link>
+          <Link
             to="/admin/users"
             className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white/80 px-6 py-3 text-base font-medium text-slate-700 shadow-sm transition hover:bg-white focus:outline-none focus:ring-2 focus:ring-slate-300 dark:border-slate-600 dark:bg-slate-800/60 dark:text-slate-200 dark:hover:bg-slate-800"
           >
