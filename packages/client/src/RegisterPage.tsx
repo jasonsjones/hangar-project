@@ -131,7 +131,7 @@ export function RegisterPage() {
     ].join(' ')
 
   return (
-    <div className="status-page-bg min-h-screen flex flex-col items-center justify-start p-8">
+    <div className="status-page-bg flex-1 flex flex-col items-center justify-start p-8">
       <div className="w-full max-w-2xl p-10 sm:p-12 rounded-2xl border backdrop-blur-xl bg-white/85 border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.9)] dark:bg-slate-800/60 dark:border-slate-600/50 dark:shadow-[0_4px_24px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]">
         <div className="mb-8 text-center">
           <h1 className="m-0 text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">

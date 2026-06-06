@@ -63,7 +63,7 @@ export function StatusPage() {
   )
 
   return (
-    <div className="status-page-bg min-h-screen flex flex-col items-center justify-center p-8">
+    <div className="status-page-bg flex-1 flex flex-col items-center justify-center p-8">
       <main className="w-full max-w-xl text-center">
         <h1 className="m-0 text-4xl sm:text-5xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">
           Welcome to Hangar 1000
