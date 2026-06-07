@@ -1,16 +1,5 @@
-import { Link, NavLink } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useAuth } from './useAuth'
-
-const linkBase =
-  'rounded-md px-3 py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-900/50'
-
-const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-  [
-    linkBase,
-    isActive
-      ? 'bg-slate-200/70 text-slate-900 dark:bg-slate-700/70 dark:text-slate-50'
-      : 'text-slate-600 hover:bg-slate-200/50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-700/50 dark:hover:text-slate-50',
-  ].join(' ')
 
 export function Navbar() {
   const { user } = useAuth()
@@ -27,15 +16,6 @@ export function Navbar() {
         >
           Hangar 1000
         </Link>
-
-        <div className="flex items-center gap-1">
-          <NavLink to="/" end className={navLinkClass}>
-            Status
-          </NavLink>
-          <NavLink to="/admin/users" className={navLinkClass}>
-            Users
-          </NavLink>
-        </div>
 
         <div className="flex items-center gap-2">
           {user ? (
