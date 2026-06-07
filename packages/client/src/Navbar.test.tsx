@@ -24,21 +24,15 @@ afterEach(() => {
 })
 
 describe('Navbar', () => {
-  it('renders the brand and primary nav links', () => {
+  it('renders the brand link to home', () => {
     mockUseAuth.mockReturnValue({ user: null } satisfies AuthState)
     renderNav()
 
     expect(
       screen.getByRole('link', { name: /hangar 1000/i }),
     ).toHaveAttribute('href', '/')
-    expect(screen.getByRole('link', { name: /^status$/i })).toHaveAttribute(
-      'href',
-      '/',
-    )
-    expect(screen.getByRole('link', { name: /^users$/i })).toHaveAttribute(
-      'href',
-      '/admin/users',
-    )
+    expect(screen.queryByRole('link', { name: /^status$/i })).toBeNull()
+    expect(screen.queryByRole('link', { name: /^users$/i })).toBeNull()
   })
 
   it('shows Sign in and Create account when signed out', () => {
