@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { useAuth } from './useAuth'
+import { Link } from "react-router-dom";
+import { useAuth } from "./useAuth";
 
 function HangarIcon({ className }: { className?: string }) {
   return (
@@ -7,36 +7,37 @@ function HangarIcon({ className }: { className?: string }) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={1.75}
+      strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden
       className={className}
     >
-      <path d="M2 11 Q12 3 22 11 V21 H2 Z" />
-      <path d="M7 21 V14 H17 V21" />
-      <path d="M12 14 V21" />
+      <path d="M2 10 Q12 2 22 10 V20 H2 Z" />
+      <path d="M7 20 V13 H17 V20" />
+      <path d="M12 13 V20" />
     </svg>
-  )
+  );
 }
 
 export function Navbar() {
-  const { user } = useAuth()
+  const { user } = useAuth();
 
   return (
     <nav
       aria-label="Primary"
       className="sticky top-0 z-10 border-b border-slate-200/80 bg-white/85 backdrop-blur-md dark:border-slate-700/60 dark:bg-slate-900/70"
     >
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link
           to="/"
-          className="group inline-flex items-center gap-2 text-base font-bold tracking-tight text-slate-900 dark:text-slate-50"
+          className="group inline-flex items-center gap-3 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50"
         >
-          <HangarIcon className="h-6 w-6 text-blue-600 transition-transform duration-200 group-hover:-translate-y-px dark:text-blue-400" />
-          <span>
-            Hangar <span className="text-blue-600 dark:text-blue-400">1000</span>
-          </span>
+          <HangarIcon className="h-12 w-12 text-blue-600 transition-transform duration-200 group-hover:-translate-y-px dark:text-blue-400" />
+          <div className="leading-none pt-1.5">
+            Hangar{" "}
+            <span className="text-blue-600 dark:text-blue-400">1000</span>
+          </div>
         </Link>
 
         <div className="flex items-center gap-2">
@@ -71,5 +72,5 @@ export function Navbar() {
         </div>
       </div>
     </nav>
-  )
+  );
 }
