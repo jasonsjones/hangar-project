@@ -1,6 +1,25 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from './useAuth'
 
+function HangarIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.75}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      className={className}
+    >
+      <path d="M2 11 Q12 3 22 11 V21 H2 Z" />
+      <path d="M7 21 V14 H17 V21" />
+      <path d="M12 14 V21" />
+    </svg>
+  )
+}
+
 export function Navbar() {
   const { user } = useAuth()
 
@@ -12,9 +31,12 @@ export function Navbar() {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
         <Link
           to="/"
-          className="text-base font-semibold tracking-tight text-slate-900 dark:text-slate-50"
+          className="group inline-flex items-center gap-2 text-base font-bold tracking-tight text-slate-900 dark:text-slate-50"
         >
-          Hangar 1000
+          <HangarIcon className="h-6 w-6 text-blue-600 transition-transform duration-200 group-hover:-translate-y-px dark:text-blue-400" />
+          <span>
+            Hangar <span className="text-blue-600 dark:text-blue-400">1000</span>
+          </span>
         </Link>
 
         <div className="flex items-center gap-2">
