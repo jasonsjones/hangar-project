@@ -28,14 +28,14 @@ describe('LoginPage', () => {
     renderPage()
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /log in/i })).toBeInTheDocument()
   })
 
   it('shows required-field errors when submitting an empty form', async () => {
     const user = userEvent.setup()
     renderPage()
 
-    await user.click(screen.getByRole('button', { name: /sign in/i }))
+    await user.click(screen.getByRole('button', { name: /log in/i }))
 
     expect(screen.getByText(/email is required/i)).toBeInTheDocument()
     expect(screen.getByText(/password is required/i)).toBeInTheDocument()
@@ -48,7 +48,7 @@ describe('LoginPage', () => {
 
     await user.type(screen.getByLabelText(/email/i), 'not-an-email')
     await user.type(screen.getByLabelText(/password/i), 'anything')
-    await user.click(screen.getByRole('button', { name: /sign in/i }))
+    await user.click(screen.getByRole('button', { name: /log in/i }))
 
     expect(
       screen.getByText(/please enter a valid email address/i),
@@ -60,7 +60,7 @@ describe('LoginPage', () => {
     const user = userEvent.setup()
     renderPage()
 
-    await user.click(screen.getByRole('button', { name: /sign in/i }))
+    await user.click(screen.getByRole('button', { name: /log in/i }))
     expect(screen.getByText(/email is required/i)).toBeInTheDocument()
 
     await user.type(screen.getByLabelText(/email/i), 'a')
@@ -86,7 +86,7 @@ describe('LoginPage', () => {
 
     await user.type(screen.getByLabelText(/email/i), 'ada@example.com')
     await user.type(screen.getByLabelText(/password/i), 'correcthorse')
-    await user.click(screen.getByRole('button', { name: /sign in/i }))
+    await user.click(screen.getByRole('button', { name: /log in/i }))
 
     expect(fetchMock).toHaveBeenCalledTimes(1)
     const [url, init] = fetchMock.mock.calls[0]
@@ -97,7 +97,7 @@ describe('LoginPage', () => {
       password: 'correcthorse',
     })
 
-    expect(await screen.findByText(/signed in/i)).toBeInTheDocument()
+    expect(await screen.findByText(/logged in/i)).toBeInTheDocument()
   })
 
   it('shows the sanitized error message when the server returns 401', async () => {
@@ -109,7 +109,7 @@ describe('LoginPage', () => {
 
     await user.type(screen.getByLabelText(/email/i), 'ada@example.com')
     await user.type(screen.getByLabelText(/password/i), 'wrongpw')
-    await user.click(screen.getByRole('button', { name: /sign in/i }))
+    await user.click(screen.getByRole('button', { name: /log in/i }))
 
     expect(
       await screen.findByText(/email or password is incorrect/i),
@@ -123,7 +123,7 @@ describe('LoginPage', () => {
 
     await user.type(screen.getByLabelText(/email/i), 'ada@example.com')
     await user.type(screen.getByLabelText(/password/i), 'correcthorse')
-    await user.click(screen.getByRole('button', { name: /sign in/i }))
+    await user.click(screen.getByRole('button', { name: /log in/i }))
 
     expect(await screen.findByText(/network error/i)).toBeInTheDocument()
   })

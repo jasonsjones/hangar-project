@@ -65,7 +65,7 @@ export function LoginPage() {
         }),
       })
       if (!response.ok) {
-        let message = 'Unable to sign in. Please try again.'
+        let message = 'Unable to log in. Please try again.'
         if (response.status === 401) {
           message = 'Email or password is incorrect.'
         } else if (response.status === 400) {
@@ -100,14 +100,14 @@ export function LoginPage() {
       <div className="w-full max-w-2xl p-10 sm:p-12 rounded-2xl border backdrop-blur-xl bg-white/85 border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.9)] dark:bg-slate-800/60 dark:border-slate-600/50 dark:shadow-[0_4px_24px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]">
         <div className="mb-8 text-center">
           <h1 className="m-0 text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">
-            Sign in
+            Log In
           </h1>
           <p className="mt-2 text-base text-slate-500 dark:text-slate-400">
             Welcome back to Hangar 1000.
           </p>
         </div>
 
-        <form onSubmit={onSubmit} noValidate aria-label="Sign in">
+        <form onSubmit={onSubmit} noValidate aria-label="Log in">
           <div className="grid gap-5">
             <div>
               <label
@@ -181,7 +181,7 @@ export function LoginPage() {
               role="status"
               className="mt-6 rounded-lg border border-green-300 bg-green-50 px-4 py-2.5 text-base text-green-700 dark:border-green-800/60 dark:bg-green-950/40 dark:text-green-300"
             >
-              Signed in. Redirecting…
+              Logged in. Redirecting…
             </div>
           )}
 
@@ -190,7 +190,7 @@ export function LoginPage() {
             disabled={submit.kind === 'submitting'}
             className="mt-8 w-full rounded-lg bg-blue-600 px-4 py-3 text-base font-medium text-white shadow-sm transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-blue-500 dark:hover:bg-blue-400 dark:focus:ring-blue-900/50"
           >
-            {submit.kind === 'submitting' ? 'Signing in…' : 'Sign in'}
+            {submit.kind === 'submitting' ? 'Logging in…' : 'Log In'}
           </button>
         </form>
 

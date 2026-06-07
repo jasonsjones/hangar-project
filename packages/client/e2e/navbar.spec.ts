@@ -17,10 +17,8 @@ test.describe('Navbar', () => {
     const nav = page.getByRole('navigation', { name: /primary/i })
     await expect(nav).toBeVisible()
     await expect(nav.getByRole('link', { name: /hangar 1000/i })).toBeVisible()
-    await expect(nav.getByRole('link', { name: /sign in/i })).toBeVisible()
-    await expect(
-      nav.getByRole('link', { name: /create account/i }),
-    ).toBeVisible()
+    await expect(nav.getByRole('link', { name: /log in/i })).toBeVisible()
+    await expect(nav.getByRole('link', { name: /register/i })).toBeVisible()
   })
 
   test('brand link returns home from another route', async ({ page }) => {
