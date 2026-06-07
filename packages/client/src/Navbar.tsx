@@ -50,7 +50,7 @@ export function Navbar() {
                 type="button"
                 className="rounded-md border border-slate-300 bg-white/80 px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-white focus:outline-none focus:ring-2 focus:ring-slate-300 dark:border-slate-600 dark:bg-slate-800/60 dark:text-slate-200 dark:hover:bg-slate-800"
               >
-                Sign out
+                Log Out
               </button>
             </>
           ) : (
@@ -59,13 +59,13 @@ export function Navbar() {
                 to="/login"
                 className="rounded-md px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-300 dark:text-slate-300 dark:hover:text-slate-50"
               >
-                Sign in
+                Log In
               </Link>
               <Link
                 to="/register"
                 className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-400 dark:focus:ring-blue-900/50"
               >
-                Create account
+                Register
               </Link>
             </>
           )}

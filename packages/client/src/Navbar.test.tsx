@@ -35,23 +35,24 @@ describe('Navbar', () => {
     expect(screen.queryByRole('link', { name: /^users$/i })).toBeNull()
   })
 
-  it('shows Sign in and Create account when signed out', () => {
+  it('shows Log In and Register when signed out', () => {
     mockUseAuth.mockReturnValue({ user: null } satisfies AuthState)
     renderNav()
 
-    expect(screen.getByRole('link', { name: /sign in/i })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /log in/i })).toHaveAttribute(
       'href',
       '/login',
     )
+    expect(screen.getByRole('link', { name: /register/i })).toHaveAttribute(
+      'href',
+      '/register',
+    )
     expect(
-      screen.getByRole('link', { name: /create account/i }),
-    ).toHaveAttribute('href', '/register')
-    expect(
-      screen.queryByRole('button', { name: /sign out/i }),
+      screen.queryByRole('button', { name: /log out/i }),
     ).not.toBeInTheDocument()
   })
 
-  it('shows the user name and Sign out button when signed in', () => {
+  it('shows the user name and Log Out button when signed in', () => {
     mockUseAuth.mockReturnValue({
       user: {
         id: '00000000-0000-0000-0000-000000000001',
@@ -64,13 +65,13 @@ describe('Navbar', () => {
 
     expect(screen.getByText(/ada lovelace/i)).toBeInTheDocument()
     expect(
-      screen.getByRole('button', { name: /sign out/i }),
+      screen.getByRole('button', { name: /log out/i }),
     ).toBeInTheDocument()
     expect(
-      screen.queryByRole('link', { name: /sign in/i }),
+      screen.queryByRole('link', { name: /log in/i }),
     ).not.toBeInTheDocument()
     expect(
-      screen.queryByRole('link', { name: /create account/i }),
+      screen.queryByRole('link', { name: /register/i }),
     ).not.toBeInTheDocument()
   })
 })

@@ -5,10 +5,10 @@ test.describe('Login page', () => {
     await page.goto('/login')
 
     await expect(
-      page.getByRole('heading', { name: /^sign in$/i }),
+      page.getByRole('heading', { name: /^log in$/i }),
     ).toBeVisible()
 
-    await page.getByRole('button', { name: /^sign in$/i }).click()
+    await page.getByRole('button', { name: /^log in$/i }).click()
 
     await expect(page.getByText(/email is required/i)).toBeVisible()
     await expect(page.getByText(/password is required/i)).toBeVisible()
@@ -49,9 +49,9 @@ test.describe('Login page', () => {
 
     await page.getByLabel(/email/i).fill('ada@example.com')
     await page.getByLabel(/password/i).fill('correcthorse')
-    await page.getByRole('button', { name: /^sign in$/i }).click()
+    await page.getByRole('button', { name: /^log in$/i }).click()
 
-    await expect(page.getByText(/signed in/i)).toBeVisible()
+    await expect(page.getByText(/logged in/i)).toBeVisible()
     await page.waitForURL('**/')
     await expect(
       page.getByRole('heading', { name: /welcome to hangar 1000/i }),
@@ -69,7 +69,7 @@ test.describe('Login page', () => {
 
     await page.getByLabel(/email/i).fill('ada@example.com')
     await page.getByLabel(/password/i).fill('wrongpw')
-    await page.getByRole('button', { name: /^sign in$/i }).click()
+    await page.getByRole('button', { name: /^log in$/i }).click()
 
     await expect(
       page.getByText(/email or password is incorrect/i),
