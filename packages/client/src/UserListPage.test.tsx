@@ -3,12 +3,17 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { UserListPage } from './UserListPage'
+import { AuthProvider } from './useAuth'
+
+const TEST_TOKEN = 'test.jwt.token'
 
 function renderPage() {
   return render(
-    <MemoryRouter initialEntries={['/admin/users']}>
-      <UserListPage />
-    </MemoryRouter>,
+    <AuthProvider>
+      <MemoryRouter initialEntries={['/admin/users']}>
+        <UserListPage />
+      </MemoryRouter>
+    </AuthProvider>,
   )
 }
 
@@ -33,12 +38,21 @@ const originalFetch = globalThis.fetch
 
 beforeEach(() => {
   globalThis.fetch = vi.fn()
+  // Seed a logged-in session so AuthProvider hands the page a token.
+  localStorage.setItem('hangar.auth.token', TEST_TOKEN)
 })
 
 afterEach(() => {
   globalThis.fetch = originalFetch
   vi.restoreAllMocks()
+  localStorage.clear()
 })
+
+/** Pulls the Authorization header off a recorded fetch call. */
+function authHeaderOf(call: [unknown, (RequestInit | undefined)?]): unknown {
+  const headers = (call[1]?.headers ?? {}) as Record<string, string>
+  return headers.Authorization
+}
 
 function mockListResponse(users: typeof SAMPLE_USERS) {
   return new Response(JSON.stringify(users), {
@@ -58,6 +72,11 @@ describe('UserListPage', () => {
     expect(await screen.findByText('Ada Lovelace')).toBeInTheDocument()
     expect(screen.getByText('alan@example.com')).toBeInTheDocument()
     expect(screen.getAllByRole('button', { name: /^delete$/i })).toHaveLength(2)
+
+    // The list fetch carries the bearer token.
+    const fetchMock = vi.mocked(globalThis.fetch)
+    expect(fetchMock.mock.calls[0][0]).toBe('/api/users')
+    expect(authHeaderOf(fetchMock.mock.calls[0])).toBe(`Bearer ${TEST_TOKEN}`)
   })
 
   it('shows an empty-state message when there are no users', async () => {
@@ -113,6 +132,7 @@ describe('UserListPage', () => {
       '/api/users/00000000-0000-0000-0000-000000000001',
     )
     expect((deleteCall[1] as RequestInit | undefined)?.method).toBe('DELETE')
+    expect(authHeaderOf(deleteCall)).toBe(`Bearer ${TEST_TOKEN}`)
   })
 
   it('cancels the delete confirmation without calling the API', async () => {

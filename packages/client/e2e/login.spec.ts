@@ -34,6 +34,7 @@ test.describe('Login page', () => {
           email: body.email,
           firstName: 'Ada',
           lastName: 'Lovelace',
+          token: 'issued.jwt.token',
         }),
       })
     })

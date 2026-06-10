@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "./useAuth";
+import { useAuth } from "./auth-context";
 
 function HangarIcon({ className }: { className?: string }) {
   return (
@@ -21,7 +21,7 @@ function HangarIcon({ className }: { className?: string }) {
 }
 
 export function Navbar() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <nav
@@ -48,6 +48,7 @@ export function Navbar() {
               </span>
               <button
                 type="button"
+                onClick={logout}
                 className="rounded-md border border-slate-300 bg-white/80 px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-white focus:outline-none focus:ring-2 focus:ring-slate-300 dark:border-slate-600 dark:bg-slate-800/60 dark:text-slate-200 dark:hover:bg-slate-800"
               >
                 Log Out

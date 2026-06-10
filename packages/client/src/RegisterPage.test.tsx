@@ -3,12 +3,15 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { RegisterPage } from './RegisterPage'
+import { AuthProvider } from './useAuth'
 
 function renderPage() {
   return render(
-    <MemoryRouter initialEntries={['/register']}>
-      <RegisterPage />
-    </MemoryRouter>,
+    <AuthProvider>
+      <MemoryRouter initialEntries={['/register']}>
+        <RegisterPage />
+      </MemoryRouter>
+    </AuthProvider>,
   )
 }
 
@@ -21,6 +24,7 @@ beforeEach(() => {
 afterEach(() => {
   globalThis.fetch = originalFetch
   vi.restoreAllMocks()
+  localStorage.clear()
 })
 
 describe('RegisterPage', () => {
@@ -111,10 +115,21 @@ describe('RegisterPage', () => {
   it('submits valid data to /api/users and shows success feedback', async () => {
     const fetchMock = vi.mocked(globalThis.fetch)
     fetchMock.mockResolvedValueOnce(
-      new Response(JSON.stringify({ id: 'abc' }), {
-        status: 201,
-        headers: { 'Content-Type': 'application/json' },
-      }),
+      new Response(
+        JSON.stringify({
+          user: {
+            id: '00000000-0000-0000-0000-000000000001',
+            email: 'ada@example.com',
+            firstName: 'Ada',
+            lastName: 'Lovelace',
+          },
+          token: 'issued.jwt.token',
+        }),
+        {
+          status: 201,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      ),
     )
     const user = userEvent.setup()
     renderPage()
@@ -138,6 +153,8 @@ describe('RegisterPage', () => {
     })
 
     expect(await screen.findByText(/account created/i)).toBeInTheDocument()
+    // Registration logs you straight in — the token is persisted.
+    expect(localStorage.getItem('hangar.auth.token')).toBe('issued.jwt.token')
   })
 
   it('shows a duplicate-email message when the server returns 409', async () => {

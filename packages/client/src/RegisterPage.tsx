@@ -1,5 +1,16 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from './auth-context'
+
+interface RegisterApiResponse {
+  user: {
+    id: string
+    email: string
+    firstName: string
+    lastName: string
+  }
+  token: string
+}
 
 interface FormState {
   email: string
@@ -55,6 +66,7 @@ function validate(values: FormState): FormErrors {
 
 export function RegisterPage() {
   const navigate = useNavigate()
+  const { login } = useAuth()
   const [values, setValues] = useState<FormState>({
     email: '',
     firstName: '',
@@ -103,6 +115,10 @@ export function RegisterPage() {
         setSubmit({ kind: 'error', message })
         return
       }
+      // Registration logs you straight in — the server hands back a token alongside
+      // the created user, so there's no need to bounce through the login form.
+      const data = (await response.json()) as RegisterApiResponse
+      login(data.token, data.user)
       setSubmit({ kind: 'success' })
       setValues({
         email: '',
