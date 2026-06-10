@@ -1,5 +1,6 @@
 package dev.jasonsjones.hanger_api.user;
 
+import dev.jasonsjones.hanger_api.security.JwtService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +14,11 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
+    private final JwtService jwtService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, JwtService jwtService) {
         this.userService = userService;
+        this.jwtService = jwtService;
     }
 
     @GetMapping
@@ -31,9 +34,11 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@Valid @RequestBody RegisterUserRequest request) {
+    public ResponseEntity<RegisterResponse> createUser(@Valid @RequestBody RegisterUserRequest request) {
         User created = userService.register(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        String token = jwtService.issueToken(created);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new RegisterResponse(created, token));
     }
 
     @PutMapping("/{id}")
