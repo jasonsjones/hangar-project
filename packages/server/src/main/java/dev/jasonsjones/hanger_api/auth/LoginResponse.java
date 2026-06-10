@@ -11,22 +11,25 @@ public class LoginResponse {
     private final String email;
     private final String firstName;
     private final String lastName;
+    private final String token;
 
-    public LoginResponse(boolean success, UUID userId, String email, String firstName, String lastName) {
+    public LoginResponse(boolean success, UUID userId, String email, String firstName, String lastName, String token) {
         this.success = success;
         this.userId = userId;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.token = token;
     }
 
-    public static LoginResponse fromUser(User user) {
+    public static LoginResponse fromUser(User user, String token) {
         return new LoginResponse(
                 true,
                 user.getId(),
                 user.getEmail(),
                 user.getFirstName(),
-                user.getLastName()
+                user.getLastName(),
+                token
         );
     }
 
@@ -35,4 +38,5 @@ public class LoginResponse {
     public String getEmail() { return email; }
     public String getFirstName() { return firstName; }
     public String getLastName() { return lastName; }
+    public String getToken() { return token; }
 }

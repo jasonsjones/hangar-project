@@ -1,5 +1,6 @@
 package dev.jasonsjones.hanger_api.auth;
 
+import dev.jasonsjones.hanger_api.security.JwtService;
 import dev.jasonsjones.hanger_api.user.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +33,18 @@ class AuthControllerTest {
     @MockitoBean
     private AuthService authService;
 
+    // Login now mints a token; SecurityConfig also wires the JWT filter (whose only
+    // dependency is JwtService). Mocking JwtService covers both.
+    @MockitoBean
+    private JwtService jwtService;
+
     @Test
     @WithMockUser
     void shouldReturn200WithUserWhenCredentialsValid() throws Exception {
         User user = new User("ada@example.com", "Ada", "Lovelace");
         when(authService.authenticate(eq("ada@example.com"), eq("correcthorse")))
                 .thenReturn(Optional.of(user));
+        when(jwtService.issueToken(user)).thenReturn("issued.jwt.token");
 
         LoginRequest request = new LoginRequest("ada@example.com", "correcthorse");
 
@@ -50,7 +57,8 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.userId").value(user.getId().toString()))
                 .andExpect(jsonPath("$.email").value("ada@example.com"))
                 .andExpect(jsonPath("$.firstName").value("Ada"))
-                .andExpect(jsonPath("$.lastName").value("Lovelace"));
+                .andExpect(jsonPath("$.lastName").value("Lovelace"))
+                .andExpect(jsonPath("$.token").value("issued.jwt.token"));
     }
 
     @Test

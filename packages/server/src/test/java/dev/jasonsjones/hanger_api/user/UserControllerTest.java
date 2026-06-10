@@ -9,6 +9,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import dev.jasonsjones.hanger_api.security.JwtService;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,6 +33,13 @@ class UserControllerTest {
 
     @MockitoBean
     private UserService userService;
+
+    // The controller mints a token on register, and SecurityConfig wires the JWT
+    // filter (whose only dependency is JwtService). Mocking JwtService satisfies
+    // both; the real filter still runs and continues the chain. @WithMockUser keeps
+    // these requests authenticated regardless of the (absent) bearer token.
+    @MockitoBean
+    private JwtService jwtService;
 
     private static final UUID ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
     private static final UUID MISSING_ID = UUID.fromString("00000000-0000-0000-0000-000000000099");
@@ -73,6 +82,7 @@ class UserControllerTest {
     void shouldCreateUserWithoutPassword() throws Exception {
         User created = new User("a@example.com", "Alice", "Smith");
         when(userService.register(any(RegisterUserRequest.class))).thenReturn(created);
+        when(jwtService.issueToken(created)).thenReturn("issued.jwt.token");
 
         RegisterUserRequest request = new RegisterUserRequest("a@example.com", "Alice", "Smith", null);
 
@@ -81,8 +91,9 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.email").value("a@example.com"))
-                .andExpect(jsonPath("$.password").doesNotExist());
+                .andExpect(jsonPath("$.user.email").value("a@example.com"))
+                .andExpect(jsonPath("$.user.password").doesNotExist())
+                .andExpect(jsonPath("$.token").value("issued.jwt.token"));
     }
 
     @Test
@@ -90,6 +101,7 @@ class UserControllerTest {
     void shouldCreateUserWithPassword() throws Exception {
         User created = new User("a@example.com", "Alice", "Smith");
         when(userService.register(any(RegisterUserRequest.class))).thenReturn(created);
+        when(jwtService.issueToken(created)).thenReturn("issued.jwt.token");
 
         RegisterUserRequest request = new RegisterUserRequest("a@example.com", "Alice", "Smith", "secretpw1");
 
@@ -98,8 +110,9 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.email").value("a@example.com"))
-                .andExpect(jsonPath("$.password").doesNotExist());
+                .andExpect(jsonPath("$.user.email").value("a@example.com"))
+                .andExpect(jsonPath("$.user.password").doesNotExist())
+                .andExpect(jsonPath("$.token").value("issued.jwt.token"));
     }
 
     @Test
