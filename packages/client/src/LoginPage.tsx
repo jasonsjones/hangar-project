@@ -1,5 +1,14 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from './auth-context'
+
+interface LoginApiResponse {
+  userId: string
+  email: string
+  firstName: string
+  lastName: string
+  token: string
+}
 
 interface FormState {
   email: string
@@ -34,6 +43,7 @@ function validate(values: FormState): FormErrors {
 
 export function LoginPage() {
   const navigate = useNavigate()
+  const { login } = useAuth()
   const [values, setValues] = useState<FormState>({ email: '', password: '' })
   const [errors, setErrors] = useState<FormErrors>({})
   const [submit, setSubmit] = useState<SubmitState>({ kind: 'idle' })
@@ -74,6 +84,14 @@ export function LoginPage() {
         setSubmit({ kind: 'error', message })
         return
       }
+      const data = (await response.json()) as LoginApiResponse
+      // Normalize the API's `userId` to the `id` our User shape uses everywhere else.
+      login(data.token, {
+        id: data.userId,
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+      })
       setSubmit({ kind: 'success' })
       setValues({ email: '', password: '' })
       setTimeout(() => navigate('/'), 1500)

@@ -1,5 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useAuth } from './auth-context'
+
+/**
+ * Builds the Authorization header for an authenticated request. Returns an empty
+ * object when there's no token so we never send a literal "Bearer null".
+ */
+function authHeaders(token: string | null): HeadersInit {
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
 
 interface User {
   id: string
@@ -32,13 +41,14 @@ function formatDate(value?: string): string {
 }
 
 export function UserListPage() {
+  const { token } = useAuth()
   const [state, setState] = useState<LoadState>({ kind: 'loading' })
   const [deleteState, setDeleteState] = useState<DeleteState>({ kind: 'idle' })
   const [reloadCount, setReloadCount] = useState(0)
 
   useEffect(() => {
     let cancelled = false
-    fetch('/api/users')
+    fetch('/api/users', { headers: authHeaders(token) })
       .then((response) => {
         if (!response.ok) throw new Error('load failed')
         return response.json() as Promise<User[]>
@@ -59,7 +69,7 @@ export function UserListPage() {
     return () => {
       cancelled = true
     }
-  }, [reloadCount])
+  }, [reloadCount, token])
 
   const onRetry = () => {
     setState({ kind: 'loading' })
@@ -71,6 +81,7 @@ export function UserListPage() {
     try {
       const response = await fetch(`/api/users/${user.id}`, {
         method: 'DELETE',
+        headers: authHeaders(token),
       })
       if (!response.ok && response.status !== 404) {
         setDeleteState({

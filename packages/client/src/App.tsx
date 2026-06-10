@@ -4,6 +4,7 @@ import { StatusPage } from './StatusPage'
 import { RegisterPage } from './RegisterPage'
 import { LoginPage } from './LoginPage'
 import { UserListPage } from './UserListPage'
+import { RequireAuth } from './useAuth'
 
 function App() {
   return (
@@ -15,7 +16,14 @@ function App() {
             <Route path="/" element={<StatusPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/admin/users" element={<UserListPage />} />
+            <Route
+              path="/admin/users"
+              element={
+                <RequireAuth>
+                  <UserListPage />
+                </RequireAuth>
+              }
+            />
           </Routes>
         </main>
       </div>

@@ -3,12 +3,15 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { LoginPage } from './LoginPage'
+import { AuthProvider } from './useAuth'
 
 function renderPage() {
   return render(
-    <MemoryRouter initialEntries={['/login']}>
-      <LoginPage />
-    </MemoryRouter>,
+    <AuthProvider>
+      <MemoryRouter initialEntries={['/login']}>
+        <LoginPage />
+      </MemoryRouter>
+    </AuthProvider>,
   )
 }
 
@@ -21,6 +24,7 @@ beforeEach(() => {
 afterEach(() => {
   globalThis.fetch = originalFetch
   vi.restoreAllMocks()
+  localStorage.clear()
 })
 
 describe('LoginPage', () => {
@@ -77,6 +81,7 @@ describe('LoginPage', () => {
           email: 'ada@example.com',
           firstName: 'Ada',
           lastName: 'Lovelace',
+          token: 'issued.jwt.token',
         }),
         { status: 200, headers: { 'Content-Type': 'application/json' } },
       ),
@@ -98,6 +103,8 @@ describe('LoginPage', () => {
     })
 
     expect(await screen.findByText(/logged in/i)).toBeInTheDocument()
+    // The token is persisted so the session survives a reload.
+    expect(localStorage.getItem('hangar.auth.token')).toBe('issued.jwt.token')
   })
 
   it('shows the sanitized error message when the server returns 401', async () => {

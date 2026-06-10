@@ -17,15 +17,56 @@ const SAMPLE_USERS = [
   },
 ]
 
+// Seeds a logged-in session before the app boots, so the RequireAuth guard lets
+// us reach /admin/users. addInitScript runs before any page script, so the token
+// is already in localStorage when AuthProvider reads it on mount.
+//
+// The signed-in admin is deliberately someone NOT in SAMPLE_USERS (Grace Hopper),
+// because the Navbar renders the logged-in user's name. If we reused a name from
+// the table, getByText() would match both the navbar greeting and a table row and
+// trip Playwright's strict-mode (multiple matches) check.
+async function seedSession(page: import('@playwright/test').Page) {
+  await page.addInitScript(() => {
+    localStorage.setItem('hangar.auth.token', 'e2e.jwt.token')
+    localStorage.setItem(
+      'hangar.auth.user',
+      JSON.stringify({
+        id: '00000000-0000-0000-0000-000000000099',
+        email: 'grace@example.com',
+        firstName: 'Grace',
+        lastName: 'Hopper',
+      }),
+    )
+  })
+}
+
 test.describe('Admin users page', () => {
+  test('redirects to /login when not authenticated', async ({ page }) => {
+    // No seeded session — the guard should bounce us before any list renders.
+    await page.goto('/admin/users')
+
+    await page.waitForURL('**/login')
+    await expect(
+      page.getByRole('heading', { name: /^log in$/i }),
+    ).toBeVisible()
+    await expect(
+      page.getByRole('heading', { name: /registered users/i }),
+    ).toHaveCount(0)
+  })
+
   test('lists all registered users', async ({ page }) => {
-    await page.route('**/api/users', (route) =>
-      route.fulfill({
+    await seedSession(page)
+    await page.route('**/api/users', (route) => {
+      // The list request carries the seeded bearer token.
+      expect(route.request().headers()['authorization']).toBe(
+        'Bearer e2e.jwt.token',
+      )
+      return route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify(SAMPLE_USERS),
-      }),
-    )
+      })
+    })
 
     await page.goto('/admin/users')
 
@@ -38,6 +79,7 @@ test.describe('Admin users page', () => {
   })
 
   test('shows the empty state when no users are registered', async ({ page }) => {
+    await seedSession(page)
     await page.route('**/api/users', (route) =>
       route.fulfill({
         status: 200,
@@ -54,6 +96,7 @@ test.describe('Admin users page', () => {
   })
 
   test('deletes a user after confirmation', async ({ page }) => {
+    await seedSession(page)
     let users = [...SAMPLE_USERS]
 
     await page.route('**/api/users', (route) =>

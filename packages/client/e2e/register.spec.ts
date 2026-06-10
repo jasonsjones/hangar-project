@@ -47,10 +47,13 @@ test.describe('Register page', () => {
         status: 201,
         contentType: 'application/json',
         body: JSON.stringify({
-          id: '00000000-0000-0000-0000-000000000001',
-          email: body.email,
-          firstName: body.firstName,
-          lastName: body.lastName,
+          user: {
+            id: '00000000-0000-0000-0000-000000000001',
+            email: body.email,
+            firstName: body.firstName,
+            lastName: body.lastName,
+          },
+          token: 'issued.jwt.token',
         }),
       })
     })

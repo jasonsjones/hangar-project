@@ -1,14 +1,15 @@
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { Navbar } from './Navbar'
-import type { AuthState } from './useAuth'
+import type { AuthState } from './auth-context'
 
-vi.mock('./useAuth', () => ({
+vi.mock('./auth-context', () => ({
   useAuth: vi.fn(),
 }))
 
-import { useAuth } from './useAuth'
+import { useAuth } from './auth-context'
 const mockUseAuth = vi.mocked(useAuth)
 
 function renderNav(initialPath = '/') {
@@ -24,8 +25,15 @@ afterEach(() => {
 })
 
 describe('Navbar', () => {
+  const loggedOut: AuthState = {
+    user: null,
+    token: null,
+    login: vi.fn(),
+    logout: vi.fn(),
+  }
+
   it('renders the brand link to home', () => {
-    mockUseAuth.mockReturnValue({ user: null } satisfies AuthState)
+    mockUseAuth.mockReturnValue(loggedOut)
     renderNav()
 
     expect(
@@ -36,7 +44,7 @@ describe('Navbar', () => {
   })
 
   it('shows Log In and Register when signed out', () => {
-    mockUseAuth.mockReturnValue({ user: null } satisfies AuthState)
+    mockUseAuth.mockReturnValue(loggedOut)
     renderNav()
 
     expect(screen.getByRole('link', { name: /log in/i })).toHaveAttribute(
@@ -52,7 +60,8 @@ describe('Navbar', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('shows the user name and Log Out button when signed in', () => {
+  it('shows the user name and Log Out button when signed in', async () => {
+    const logout = vi.fn()
     mockUseAuth.mockReturnValue({
       user: {
         id: '00000000-0000-0000-0000-000000000001',
@@ -60,13 +69,19 @@ describe('Navbar', () => {
         firstName: 'Ada',
         lastName: 'Lovelace',
       },
+      token: 'issued.jwt.token',
+      login: vi.fn(),
+      logout,
     } satisfies AuthState)
     renderNav()
 
     expect(screen.getByText(/ada lovelace/i)).toBeInTheDocument()
-    expect(
-      screen.getByRole('button', { name: /log out/i }),
-    ).toBeInTheDocument()
+    const logoutButton = screen.getByRole('button', { name: /log out/i })
+    expect(logoutButton).toBeInTheDocument()
+
+    // Clicking Log Out calls into the auth context.
+    await userEvent.click(logoutButton)
+    expect(logout).toHaveBeenCalledOnce()
     expect(
       screen.queryByRole('link', { name: /log in/i }),
     ).not.toBeInTheDocument()
