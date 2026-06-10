@@ -326,12 +326,12 @@ export function RegisterPage() {
         </form>
 
         <p className="mt-8 text-center text-sm text-slate-500 dark:text-slate-400">
-          Already set up?{' '}
+          Already have an account?{' '}
           <Link
-            to="/"
+            to="/login"
             className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
           >
-            Back to home
+            Log in here
           </Link>
         </p>
       </div>
