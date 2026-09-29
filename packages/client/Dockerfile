@@ -3,8 +3,8 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-COPY package.json ./
-RUN npm install
+COPY package.json package-lock.json ./
+RUN npm ci
 
 ARG VITE_BUILD_COMMIT=unknown
 ENV VITE_BUILD_COMMIT=$VITE_BUILD_COMMIT
