@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Minimal Eclipse formatter profile for the Red Hat Java extension. Only the
+  settings that differ from Eclipse's defaults are listed; everything else
+  falls back to the defaults.
+-->
+<profiles version="21">
+    <profile kind="CodeFormatterProfile" name="hangar" version="21">
+        <setting id="org.eclipse.jdt.core.formatter.tabulation.char" value="space"/>
+        <setting id="org.eclipse.jdt.core.formatter.tabulation.size" value="4"/>
+        <setting id="org.eclipse.jdt.core.formatter.indentation.size" value="4"/>
+        <!-- Wrapped lines indent 1 level (4 spaces) instead of Eclipse's default of 2 (8). -->
+        <setting id="org.eclipse.jdt.core.formatter.continuation_indentation" value="1"/>
+        <setting id="org.eclipse.jdt.core.formatter.continuation_indentation_for_array_initializer" value="1"/>
+        <setting id="org.eclipse.jdt.core.formatter.lineSplit" value="120"/>
+        <setting id="org.eclipse.jdt.core.formatter.comment.line_length" value="100"/>
+    </profile>
+</profiles>
