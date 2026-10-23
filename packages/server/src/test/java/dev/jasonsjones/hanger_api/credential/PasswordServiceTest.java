@@ -96,10 +96,10 @@ class PasswordServiceTest {
     @Test
     void shouldRejectBlankPasswordOnSet() {
         assertThatThrownBy(() -> passwordService.setPassword(userId, ""))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> passwordService.setPassword(userId, "   "))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> passwordService.setPassword(userId, null))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 }

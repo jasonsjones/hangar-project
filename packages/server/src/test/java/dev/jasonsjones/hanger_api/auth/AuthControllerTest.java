@@ -43,22 +43,22 @@ class AuthControllerTest {
     void shouldReturn200WithUserWhenCredentialsValid() throws Exception {
         User user = new User("ada@example.com", "Ada", "Lovelace");
         when(authService.authenticate(eq("ada@example.com"), eq("correcthorse")))
-                .thenReturn(Optional.of(user));
+            .thenReturn(Optional.of(user));
         when(jwtService.issueToken(user)).thenReturn("issued.jwt.token");
 
         LoginRequest request = new LoginRequest("ada@example.com", "correcthorse");
 
         mockMvc.perform(post("/api/auth/login")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.userId").value(user.getId().toString()))
-                .andExpect(jsonPath("$.email").value("ada@example.com"))
-                .andExpect(jsonPath("$.firstName").value("Ada"))
-                .andExpect(jsonPath("$.lastName").value("Lovelace"))
-                .andExpect(jsonPath("$.token").value("issued.jwt.token"));
+            .with(csrf())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.userId").value(user.getId().toString()))
+            .andExpect(jsonPath("$.email").value("ada@example.com"))
+            .andExpect(jsonPath("$.firstName").value("Ada"))
+            .andExpect(jsonPath("$.lastName").value("Lovelace"))
+            .andExpect(jsonPath("$.token").value("issued.jwt.token"));
     }
 
     @Test
@@ -69,10 +69,10 @@ class AuthControllerTest {
         LoginRequest request = new LoginRequest("ada@example.com", "wrongpw");
 
         mockMvc.perform(post("/api/auth/login")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isUnauthorized());
+            .with(csrf())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -83,10 +83,10 @@ class AuthControllerTest {
         LoginRequest request = new LoginRequest("ghost@example.com", "anything");
 
         mockMvc.perform(post("/api/auth/login")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isUnauthorized());
+            .with(csrf())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -95,10 +95,10 @@ class AuthControllerTest {
         LoginRequest request = new LoginRequest("", "correcthorse");
 
         mockMvc.perform(post("/api/auth/login")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest());
+            .with(csrf())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -107,10 +107,10 @@ class AuthControllerTest {
         LoginRequest request = new LoginRequest("not-an-email", "correcthorse");
 
         mockMvc.perform(post("/api/auth/login")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest());
+            .with(csrf())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -119,9 +119,9 @@ class AuthControllerTest {
         LoginRequest request = new LoginRequest("ada@example.com", "");
 
         mockMvc.perform(post("/api/auth/login")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest());
+            .with(csrf())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isBadRequest());
     }
 }

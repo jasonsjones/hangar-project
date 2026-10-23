@@ -24,13 +24,12 @@ public class LoginResponse {
 
     public static LoginResponse fromUser(User user, String token) {
         return new LoginResponse(
-                true,
-                user.getId(),
-                user.getEmail(),
-                user.getFirstName(),
-                user.getLastName(),
-                token
-        );
+            true,
+            user.getId(),
+            user.getEmail(),
+            user.getFirstName(),
+            user.getLastName(),
+            token);
     }
 
     public boolean isSuccess() { return success; }

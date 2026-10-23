@@ -36,9 +36,8 @@ class UserServiceTest {
     @Test
     void shouldReturnAllUsers() {
         List<User> users = List.of(
-                new User("a@example.com", "Alice", "Smith"),
-                new User("b@example.com", "Bob", "Jones")
-        );
+            new User("a@example.com", "Alice", "Smith"),
+            new User("b@example.com", "Bob", "Jones"));
         when(userRepository.findAll()).thenReturn(users);
 
         assertThat(userService.findAll()).hasSize(2);
@@ -101,8 +100,8 @@ class UserServiceTest {
         when(userRepository.existsByEmail("a@example.com")).thenReturn(true);
 
         assertThatThrownBy(() -> userService.register(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("a@example.com");
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("a@example.com");
         verify(userRepository, never()).save(any());
         verify(passwordService, never()).setPassword(any(), any());
     }

@@ -25,11 +25,11 @@ public class PasswordService {
         }
         String hash = passwordEncoder.encode(rawPassword);
         credentialRepository.findByUserIdAndProvider(userId, PROVIDER)
-                .map(existing -> {
-                    existing.setSecret(hash);
-                    return credentialRepository.save(existing);
-                })
-                .orElseGet(() -> credentialRepository.save(Credential.password(userId, hash)));
+            .map(existing -> {
+                existing.setSecret(hash);
+                return credentialRepository.save(existing);
+            })
+            .orElseGet(() -> credentialRepository.save(Credential.password(userId, hash)));
     }
 
     public boolean verifyPassword(UUID userId, String rawPassword) {
@@ -37,7 +37,7 @@ public class PasswordService {
             return false;
         }
         return credentialRepository.findByUserIdAndProvider(userId, PROVIDER)
-                .map(credential -> passwordEncoder.matches(rawPassword, credential.getSecret()))
-                .orElse(false);
+            .map(credential -> passwordEncoder.matches(rawPassword, credential.getSecret()))
+            .orElse(false);
     }
 }

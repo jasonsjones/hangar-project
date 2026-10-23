@@ -35,14 +35,14 @@ class JwtServiceTest {
         String token = service.issueToken(user);
 
         assertThatThrownBy(() -> service.parseUserId(token))
-                .isInstanceOf(JwtException.class);
+            .isInstanceOf(JwtException.class);
     }
 
     @Test
     void shouldRejectATokenSignedWithADifferentSecret() {
         JwtService issuer = new JwtService(SECRET, ONE_HOUR);
         JwtService verifier = new JwtService(
-                "a-completely-different-secret-key-0123456789", ONE_HOUR);
+            "a-completely-different-secret-key-0123456789", ONE_HOUR);
         User user = new User("ada@example.com", "Ada", "Lovelace");
 
         String token = issuer.issueToken(user);
@@ -50,7 +50,7 @@ class JwtServiceTest {
         // Signature verification must fail when the verifying key doesn't match —
         // this is what stops an attacker from forging a token.
         assertThatThrownBy(() -> verifier.parseUserId(token))
-                .isInstanceOf(JwtException.class);
+            .isInstanceOf(JwtException.class);
     }
 
     @Test
@@ -58,6 +58,6 @@ class JwtServiceTest {
         JwtService service = new JwtService(SECRET, ONE_HOUR);
 
         assertThatThrownBy(() -> service.parseUserId("not.a.jwt"))
-                .isInstanceOf(JwtException.class);
+            .isInstanceOf(JwtException.class);
     }
 }

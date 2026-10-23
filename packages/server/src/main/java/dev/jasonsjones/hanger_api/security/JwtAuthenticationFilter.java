@@ -45,9 +45,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-            @NonNull HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain) throws ServletException, IOException {
+        @NonNull HttpServletRequest request,
+        @NonNull HttpServletResponse response,
+        @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (header != null && header.startsWith(BEARER_PREFIX)) {
@@ -58,9 +58,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // authority list still yields an authenticated token, which is all the
                 // ".authenticated()" rules require.
                 var authentication = new UsernamePasswordAuthenticationToken(
-                        userId, null, List.of());
+                    userId, null, List.of());
                 authentication.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request));
+                    new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (JwtException | IllegalArgumentException ex) {
                 // Malformed, tampered, or expired token — leave the context anonymous
