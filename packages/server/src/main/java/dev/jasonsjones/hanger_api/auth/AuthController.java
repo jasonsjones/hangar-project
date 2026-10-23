@@ -23,8 +23,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         return authService.authenticate(request.getEmail(), request.getPassword())
-                .map(user -> LoginResponse.fromUser(user, jwtService.issueToken(user)))
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(401).build());
+            .map(user -> LoginResponse.fromUser(user, jwtService.issueToken(user)))
+            .map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.status(401).build());
     }
 }

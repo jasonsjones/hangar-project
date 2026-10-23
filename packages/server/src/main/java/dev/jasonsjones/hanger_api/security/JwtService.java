@@ -31,8 +31,8 @@ public class JwtService {
     private final long expirationMillis;
 
     public JwtService(
-            @Value("${security.jwt.secret}") String secret,
-            @Value("${security.jwt.expiration}") long expirationMillis) {
+        @Value("${security.jwt.secret}") String secret,
+        @Value("${security.jwt.expiration}") long expirationMillis) {
         // HS256 requires a key of at least 256 bits (32 bytes). Building the key
         // from the raw secret bytes lets us fail fast at startup if it's too short,
         // rather than at the first sign() call.
@@ -48,12 +48,12 @@ public class JwtService {
     public String issueToken(User user) {
         Instant now = Instant.now();
         return Jwts.builder()
-                .subject(user.getId().toString())
-                .claim("email", user.getEmail())
-                .issuedAt(Date.from(now))
-                .expiration(Date.from(now.plusMillis(expirationMillis)))
-                .signWith(signingKey)
-                .compact();
+            .subject(user.getId().toString())
+            .claim("email", user.getEmail())
+            .issuedAt(Date.from(now))
+            .expiration(Date.from(now.plusMillis(expirationMillis)))
+            .signWith(signingKey)
+            .compact();
     }
 
     /**
@@ -63,10 +63,10 @@ public class JwtService {
      */
     public UUID parseUserId(String token) {
         Claims claims = Jwts.parser()
-                .verifyWith(signingKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+            .verifyWith(signingKey)
+            .build()
+            .parseSignedClaims(token)
+            .getPayload();
         return UUID.fromString(claims.getSubject());
     }
 }

@@ -48,13 +48,12 @@ class UserControllerTest {
     @WithMockUser
     void shouldReturnAllUsers() throws Exception {
         when(userService.findAll()).thenReturn(List.of(
-                new User("a@example.com", "Alice", "Smith")
-        ));
+            new User("a@example.com", "Alice", "Smith")));
 
         mockMvc.perform(get("/api/users"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].email").value("a@example.com"));
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$[0].email").value("a@example.com"));
     }
 
     @Test
@@ -64,8 +63,8 @@ class UserControllerTest {
         when(userService.findById(ID)).thenReturn(Optional.of(user));
 
         mockMvc.perform(get("/api/users/" + ID))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("a@example.com"));
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.email").value("a@example.com"));
     }
 
     @Test
@@ -74,7 +73,7 @@ class UserControllerTest {
         when(userService.findById(MISSING_ID)).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/users/" + MISSING_ID))
-                .andExpect(status().isNotFound());
+            .andExpect(status().isNotFound());
     }
 
     @Test
@@ -87,13 +86,13 @@ class UserControllerTest {
         RegisterUserRequest request = new RegisterUserRequest("a@example.com", "Alice", "Smith", null);
 
         mockMvc.perform(post("/api/users")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.user.email").value("a@example.com"))
-                .andExpect(jsonPath("$.user.password").doesNotExist())
-                .andExpect(jsonPath("$.token").value("issued.jwt.token"));
+            .with(csrf())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.user.email").value("a@example.com"))
+            .andExpect(jsonPath("$.user.password").doesNotExist())
+            .andExpect(jsonPath("$.token").value("issued.jwt.token"));
     }
 
     @Test
@@ -106,13 +105,13 @@ class UserControllerTest {
         RegisterUserRequest request = new RegisterUserRequest("a@example.com", "Alice", "Smith", "secretpw1");
 
         mockMvc.perform(post("/api/users")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.user.email").value("a@example.com"))
-                .andExpect(jsonPath("$.user.password").doesNotExist())
-                .andExpect(jsonPath("$.token").value("issued.jwt.token"));
+            .with(csrf())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.user.email").value("a@example.com"))
+            .andExpect(jsonPath("$.user.password").doesNotExist())
+            .andExpect(jsonPath("$.token").value("issued.jwt.token"));
     }
 
     @Test
@@ -121,10 +120,10 @@ class UserControllerTest {
         RegisterUserRequest invalid = new RegisterUserRequest("not-an-email", "", "Smith", null);
 
         mockMvc.perform(post("/api/users")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalid)))
-                .andExpect(status().isBadRequest());
+            .with(csrf())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(invalid)))
+            .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -133,10 +132,10 @@ class UserControllerTest {
         RegisterUserRequest invalid = new RegisterUserRequest("a@example.com", "Alice", "Smith", "short");
 
         mockMvc.perform(post("/api/users")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalid)))
-                .andExpect(status().isBadRequest());
+            .with(csrf())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(invalid)))
+            .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -146,11 +145,11 @@ class UserControllerTest {
         when(userService.update(eq(ID), any(User.class))).thenReturn(Optional.of(updated));
 
         mockMvc.perform(put("/api/users/" + ID)
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updated)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("new@example.com"));
+            .with(csrf())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(updated)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.email").value("new@example.com"));
     }
 
     @Test
@@ -160,10 +159,10 @@ class UserControllerTest {
         User user = new User("a@example.com", "Alice", "Smith");
 
         mockMvc.perform(put("/api/users/" + MISSING_ID)
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user)))
-                .andExpect(status().isNotFound());
+            .with(csrf())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(user)))
+            .andExpect(status().isNotFound());
     }
 
     @Test
@@ -172,7 +171,7 @@ class UserControllerTest {
         when(userService.deleteById(ID)).thenReturn(true);
 
         mockMvc.perform(delete("/api/users/" + ID).with(csrf()))
-                .andExpect(status().isNoContent());
+            .andExpect(status().isNoContent());
     }
 
     @Test
@@ -181,6 +180,6 @@ class UserControllerTest {
         when(userService.deleteById(MISSING_ID)).thenReturn(false);
 
         mockMvc.perform(delete("/api/users/" + MISSING_ID).with(csrf()))
-                .andExpect(status().isNotFound());
+            .andExpect(status().isNotFound());
     }
 }

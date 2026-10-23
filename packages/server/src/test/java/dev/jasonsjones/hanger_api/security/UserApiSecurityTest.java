@@ -49,14 +49,14 @@ class UserApiSecurityTest {
     @Test
     void shouldReject401WhenListingUsersWithoutToken() throws Exception {
         mockMvc.perform(get("/api/users"))
-                .andExpect(status().isUnauthorized());
+            .andExpect(status().isUnauthorized());
     }
 
     @Test
     void shouldReject401WhenTokenIsGarbage() throws Exception {
         mockMvc.perform(get("/api/users")
-                        .header("Authorization", "Bearer not.a.real.token"))
-                .andExpect(status().isUnauthorized());
+            .header("Authorization", "Bearer not.a.real.token"))
+            .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -66,8 +66,8 @@ class UserApiSecurityTest {
         String token = jwtService.issueToken(user);
 
         mockMvc.perform(get("/api/users")
-                        .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk());
+            .header("Authorization", "Bearer " + token))
+            .andExpect(status().isOk());
     }
 
     @Test
@@ -76,23 +76,23 @@ class UserApiSecurityTest {
         when(userService.register(any())).thenReturn(created);
 
         String body = objectMapper.writeValueAsString(
-                java.util.Map.of(
-                        "email", "new@example.com",
-                        "firstName", "New",
-                        "lastName", "User",
-                        "password", "secretpw1"));
+            java.util.Map.of(
+                "email", "new@example.com",
+                "firstName", "New",
+                "lastName", "User",
+                "password", "secretpw1"));
 
         mockMvc.perform(post("/api/users")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body))
-                .andExpect(status().isCreated());
+            .with(csrf())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(body))
+            .andExpect(status().isCreated());
     }
 
     @Test
     void shouldReject401WhenDeletingUserWithoutToken() throws Exception {
         mockMvc.perform(delete("/api/users/00000000-0000-0000-0000-000000000001")
-                        .with(csrf()))
-                .andExpect(status().isUnauthorized());
+            .with(csrf()))
+            .andExpect(status().isUnauthorized());
     }
 }

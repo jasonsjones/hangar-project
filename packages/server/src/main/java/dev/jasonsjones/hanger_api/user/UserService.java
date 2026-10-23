@@ -33,10 +33,9 @@ public class UserService {
             throw new IllegalArgumentException("Email already in use: " + request.getEmail());
         }
         User saved = userRepository.save(new User(
-                request.getEmail(),
-                request.getFirstName(),
-                request.getLastName()
-        ));
+            request.getEmail(),
+            request.getFirstName(),
+            request.getLastName()));
         if (request.getPassword() != null && !request.getPassword().isBlank()) {
             passwordService.setPassword(saved.getId(), request.getPassword());
         }

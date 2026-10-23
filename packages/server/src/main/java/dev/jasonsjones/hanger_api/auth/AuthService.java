@@ -20,6 +20,6 @@ public class AuthService {
 
     public Optional<User> authenticate(String email, String rawPassword) {
         return userRepository.findByEmail(email)
-                .filter(user -> passwordService.verifyPassword(user.getId(), rawPassword));
+            .filter(user -> passwordService.verifyPassword(user.getId(), rawPassword));
     }
 }

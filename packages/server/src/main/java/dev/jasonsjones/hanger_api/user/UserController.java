@@ -29,8 +29,8 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable UUID id) {
         return userService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -38,14 +38,14 @@ public class UserController {
         User created = userService.register(request);
         String token = jwtService.issueToken(created);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new RegisterResponse(created, token));
+            .body(new RegisterResponse(created, token));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable UUID id, @Valid @RequestBody User user) {
         return userService.update(id, user)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
