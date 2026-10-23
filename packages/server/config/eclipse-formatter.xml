@@ -14,5 +14,23 @@
         <setting id="org.eclipse.jdt.core.formatter.continuation_indentation_for_array_initializer" value="1"/>
         <setting id="org.eclipse.jdt.core.formatter.lineSplit" value="120"/>
         <setting id="org.eclipse.jdt.core.formatter.comment.line_length" value="100"/>
+        <!-- Preserve one-line bodies like "public String getEmail() { return email; }" and "{}". -->
+        <setting id="org.eclipse.jdt.core.formatter.keep_method_body_on_one_line" value="one_line_preserve"/>
+        <setting id="org.eclipse.jdt.core.formatter.keep_type_declaration_body_on_one_line" value="one_line_preserve"/>
+        <setting id="org.eclipse.jdt.core.formatter.keep_anonymous_type_declaration_on_one_line" value="one_line_preserve"/>
+        <setting id="org.eclipse.jdt.core.formatter.keep_enum_declaration_on_one_line" value="one_line_preserve"/>
+        <setting id="org.eclipse.jdt.core.formatter.keep_record_declaration_on_one_line" value="one_line_preserve"/>
+
+
+
+
+        <setting id="org.eclipse.jdt.core.formatter.keep_simple_getter_setter_on_one_line" value="false"/>
+        <!-- Re-indent only: never re-wrap code or re-flow comments/Javadoc. -->
+        <setting id="org.eclipse.jdt.core.formatter.join_wrapped_lines" value="false"/>
+        <setting id="org.eclipse.jdt.core.formatter.join_lines_in_comments" value="false"/>
+        <setting id="org.eclipse.jdt.core.formatter.comment.format_javadoc_comments" value="false"/>
+        <setting id="org.eclipse.jdt.core.formatter.comment.format_block_comments" value="false"/>
+        <setting id="org.eclipse.jdt.core.formatter.comment.format_line_comments" value="false"/>
+        <setting id="org.eclipse.jdt.core.formatter.comment.format_header" value="false"/>
     </profile>
 </profiles>
